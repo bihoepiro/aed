@@ -3,4 +3,8 @@ project(HW_HT)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(HW_HT main.cpp)
+add_executable(HW_HT main.cpp
+        ListNode.h
+        ForwardList.h
+        Hash_Table_Set.h
+        set_from_seq.h)
