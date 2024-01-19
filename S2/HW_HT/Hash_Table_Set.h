@@ -5,8 +5,8 @@
 #ifndef HW_HT_HASH_TABLE_SET_H
 #define HW_HT_HASH_TABLE_SET_H
 
-#include "set_from_seq.h"  // Asegúrate de incluir el encabezado de Set_from_Seq
-#include "ForwardList.h"  // Asegúrate de incluir el encabezado de ForwardList
+#include "set_from_seq.h"
+#include "ForwardList.h"
 #include <vector>
 #include <cstdlib>
 #include <ctime>
@@ -22,17 +22,15 @@ private:
     int r;
     int p;
     int a;
-    int upper;  // Add this line
-    int lower;  // Add this line
+    int upper;
+    int lower;
 
     void _compute_bounds() {
-        // Implementa la función _compute_bounds
         upper = A.size();
         lower = A.size() * 100 * 100 / (r * r);
     }
 
     void _resize(int n) {
-        // Implementa la función _resize
         if (lower >= n || n >= upper) {
             int f = r / 100;
             if (r % 100) {
@@ -54,7 +52,7 @@ private:
     }
 
 public:
-    // Constructor
+
     Hash_Table_Set(int r = 200) : chain_set(), A(), size(0), r(r), p(2147483647) {
         // Inicializa el generador de números aleatorios
         srand(static_cast<unsigned>(time(nullptr)));
@@ -69,12 +67,11 @@ public:
     // Destructor
     ~Hash_Table_Set() = default;
 
-    // Función que devuelve el tamaño de la tabla hash
+
     int len() const {
         return size;
     }
 
-    // Iterador que recorre la tabla hash
     set_from_seq<ForwardList<T>> iter() const {
         set_from_seq<ForwardList<T>> result;
         for (const auto& X : A) {
@@ -83,20 +80,19 @@ public:
         return result;
     }
 
-    // Función que construye la tabla hash a partir de una secuencia X
+
     void build(const set_from_seq<ForwardList<T>>& X) {
         for (const auto& x : X) {
             insert(x);
         }
     }
 
-    // Función de búsqueda en la tabla hash
+
     T find(int k) const {
         int h = _hash(k, A.size());
         return A[h].find(k);
     }
 
-    // Función de inserción en la tabla hash
     bool insert(const T& x) {
         _resize(size + 1);
         int h = _hash(x.key, A.size());
@@ -107,7 +103,6 @@ public:
         return added;
     }
 
-    // Función de eliminación en la tabla hash
     T remove(int k) {
         assert(len() > 0);
         int h = _hash(k, A.size());
