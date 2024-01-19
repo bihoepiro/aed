@@ -5,166 +5,187 @@
 #ifndef HW_HT_HASH_TABLE_SET_H
 #define HW_HT_HASH_TABLE_SET_H
 
-#include "set_from_seq.h"
-#include "ForwardList.h"
-#include <vector>
-#include <cstdlib>
-#include <ctime>
+#include <forward_list>
+#include <initializer_list>
 #include <iostream>
-using namespace std;
+#include <stdexcept>
 
-template <typename T>
+const int maxColision = 3;
+const float maxFillFactor = 0.5;
+
+template<typename TK, typename TV>
 class Hash_Table_Set {
 private:
-    set_from_seq<ForwardList<T>> chain_set;
-    vector<ForwardList<T>> A;
-    int size;
-    int r;
-    int p;
-    int a;
-    int upper;
-    int lower;
+    struct Entry {
+        TK first;
+        TV second;
 
-    void _compute_bounds() {
-        upper = A.size();
-        lower = A.size() * 100 * 100 / (r * r);
+        Entry(TK key, TV value) : first(key), second(value) {}
+    };
+
+    std::forward_list<Entry>* array;
+    size_t capacity;
+    size_t size;
+
+    double computeBounds() const {
+        return static_cast<double>(size) / (capacity * maxColision);
     }
 
-    void _resize(int n) {
-        if (lower >= n || n >= upper) {
-            int f = r / 100;
-            if (r % 100) {
-                f += 1;
+    size_t hash(TK key) const {
+        std::hash<TK> ptrHash;
+        return ptrHash(key);
+    }
+
+    void resize() {
+        auto oldArray = array;
+        auto oldCapacity = capacity;
+        capacity *= 2;
+        array = new std::forward_list<Entry>[capacity];
+        size = 0;
+
+        for (int i = 0; i < static_cast<int>(oldCapacity); ++i) {
+            for (const auto& it : oldArray[i]) {
+                insert(it.first, it.second);
             }
-            int m = max(n, 1) * f;
-            A = vector<ForwardList<T>>(m, chain_set);
-            for (const auto& x : *this) {
-                int h = _hash(x.key, m);
-                A[h].insert(x);
-            }
-            _compute_bounds();
         }
-    }
 
-    int _hash(int k, int m) {
-
-        return ((a * k) % p) % m;
+        delete[] oldArray;
     }
 
 public:
+    Hash_Table_Set() : capacity(10), array(new std::forward_list<Entry>[capacity]), size(0) {}
 
-    Hash_Table_Set(int r = 200) : chain_set(), A(), size(0), r(r), p(2147483647) {
-
-        srand(static_cast<unsigned>(time(nullptr)));
-
-        // Inicializa a con un valor aleatorio en el rango [1, p - 1]
-        a = rand() % (p - 1) + 1;
-
-        _compute_bounds();
-        _resize(0);
+    std::forward_list<Entry>& iter(size_t index) {
+        return array[index];
     }
 
-    ~Hash_Table_Set() = default;
+    void build(std::initializer_list<std::pair<TK, TV>> values) {
+        for (const auto& pair : values) {
+            insert(pair.first, pair.second);
+        }
+    }
 
-    int len() const {
+    void insert(TK key, TV value) {
+        if (computeBounds() >= maxFillFactor) {
+            resize();
+        }
+        size_t hashcode = hash(key);
+        int index = hashcode % capacity;
+
+        for (auto& it : array[index]) {
+            if (it.first == key) {
+                it.second = value;
+                return;
+            }
+        }
+
+        array[index].push_front(Entry(key, value));
+        size++;
+    }
+
+    TV& find(TK key) const {
+        size_t hashcode = hash(key);
+        int index = hashcode % capacity;
+        for (const auto& it : array[index]) {
+            if (it.first == key) {
+                return static_cast<std::basic_string<char> &>(static_cast<std::basic_string<char> &>(it.second));
+            }
+        }
+        throw std::out_of_range("Key not found");
+    }
+
+    void remove(TK key) {
+        size_t hashcode = hash(key);
+        int index = hashcode % capacity;
+
+        auto prev = array[index].before_begin();
+        for (auto it = array[index].begin(); it != array[index].end(); ++it) {
+            if (it->first == key) {
+                array[index].erase_after(prev);
+                size--;
+                return;
+            }
+            prev++;
+        }
+    }
+
+    Entry& find_min() const {
+        if (size == 0) {
+            throw std::out_of_range("Empty set");
+        }
+
+        auto minEntry = &array[0].front();
+        for (size_t i = 1; i < capacity; ++i) {
+            if (!array[i].empty() && array[i].front().first < minEntry->first) {
+                minEntry = &array[i].front();
+            }
+        }
+
+        return *minEntry;
+    }
+
+    Entry& find_max() const {
+        if (size == 0) {
+            throw std::out_of_range("Empty set");
+        }
+
+        auto maxEntry = &array[0].front();
+        for (size_t i = 1; i < capacity; ++i) {
+            if (!array[i].empty() && array[i].front().first > maxEntry->first) {
+                maxEntry = &array[i].front();
+            }
+        }
+
+        return *maxEntry;
+    }
+
+    Entry& find_next(TK key) const {
+        for (size_t i = 0; i < capacity; ++i) {
+            for (auto& entry : array[i]) {
+                if (entry.first > key) {
+                    return entry;
+                }
+            }
+        }
+
+        throw std::out_of_range("No next element");
+    }
+
+    Entry& find_prev(TK key) const {
+        Entry* prevEntry = nullptr;
+
+        for (size_t i = 0; i < capacity; ++i) {
+            for (auto& entry : array[i]) {
+                if (entry.first < key && (!prevEntry || entry.first > prevEntry->first)) {
+                    prevEntry = &entry;
+                }
+            }
+        }
+
+        if (!prevEntry) {
+            throw std::out_of_range("No previous element");
+        }
+
+        return *prevEntry;
+    }
+
+    std::forward_list<Entry> iter_order() const {
+        std::forward_list<Entry> result;
+        for (size_t i = 0; i < capacity; ++i) {
+            for (const auto& entry : array[i]) {
+                result.push_front(entry);
+            }
+        }
+        return result;
+    }
+
+    size_t len() const {
         return size;
     }
 
-    set_from_seq<ForwardList<T>> iter() const {
-        set_from_seq<ForwardList<T>> result;
-        for (const auto& X : A) {
-            result.build(X);
-        }
-        return result;
-    }
-
-
-    void build(const set_from_seq<ForwardList<T>>& X) {
-        for (const auto& x : X) {
-            insert(x);
-        }
-    }
-
-
-    T find(int k) const {
-        int h = _hash(k, A.size());
-        return A[h].find(k);
-    }
-
-    bool insert(const T& x) {
-        _resize(size + 1);
-        int h = _hash(x.key, A.size());
-        bool added = A[h].insert(x);
-        if (added) {
-            size += 1;
-        }
-        return added;
-    }
-
-    // se cambió de nombre a la función de delete a rmeove porque c++ no acepta delete.
-    T remove(int k) {
-        assert(len() > 0);
-        int h = _hash(k, A.size());
-        T result = A[h].remove(k);
-        size -= 1;
-        _resize(size);
-        return result;
-    }
-
-    T find_min() const {
-        T out = T();
-        for (const auto& x : *this) {
-            if (out.key == -1 || x.key < out.key) {
-                out = x;
-            }
-        }
-        return out;
-    }
-
-    T find_max() const {
-        T out = T();
-        for (const auto& x : *this) {
-            if (out.key == -1 || x.key > out.key) {
-                out = x;
-            }
-        }
-        return out;
-    }
-
-    T find_next(int k) const {
-        T out = T();
-        for (const auto& x : *this) {
-            if (x.key > k) {
-                if (out.key == -1 || x.key < out.key) {
-                    out = x;
-                }
-            }
-        }
-        return out;
-    }
-
-    T find_prev(int k) const {
-        T out = T();
-        for (const auto& x : *this) {
-            if (x.key < k) {
-                if (out.key == -1 || x.key > out.key) {
-                    out = x;
-                }
-            }
-        }
-        return out;
-    }
-
-    set_from_seq<ForwardList<T>> iter_order() const {
-        set_from_seq<ForwardList<T>> result;
-        T x = find_min();
-        while (x.key != -1) {
-            result.insert(x);
-            x = find_next(x.key);
-        }
-        return result;
+    ~Hash_Table_Set() {
+        delete[] array;
     }
 };
-
 
 #endif //HW_HT_HASH_TABLE_SET_H

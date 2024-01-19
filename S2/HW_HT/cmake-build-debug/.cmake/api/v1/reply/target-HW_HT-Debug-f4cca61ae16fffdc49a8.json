@@ -98,8 +98,7 @@
 			[
 				1,
 				2,
-				3,
-				4
+				3
 			]
 		}
 	],
@@ -124,11 +123,6 @@
 		{
 			"backtrace" : 1,
 			"path" : "Hash_Table_Set.h",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 1,
-			"path" : "set_from_seq.h",
 			"sourceGroupIndex" : 1
 		}
 	],

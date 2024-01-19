@@ -16,6 +16,15 @@ private:
 public:
     ForwardList() : head(nullptr) {}
 
+    ListNode<T>* begin() {
+        return head;
+    }
+
+    ListNode<T>* end() {
+        return nullptr; // O ajusta según lo que represente el final en tu implementación
+    }
+
+
     T front() {
         if (empty()) {throw out_of_range("Lista vacía");}
         return head->value;
