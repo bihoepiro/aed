@@ -64,9 +64,7 @@ public:
         _resize(0);
     }
 
-    // Destructor
     ~Hash_Table_Set() = default;
-
 
     int len() const {
         return size;
@@ -103,6 +101,7 @@ public:
         return added;
     }
 
+    // se cambió de nombre a la función de delete a rmeove porque c++ no acepta delete.
     T remove(int k) {
         assert(len() > 0);
         int h = _hash(k, A.size());
