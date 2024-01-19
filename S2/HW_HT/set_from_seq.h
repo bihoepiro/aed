@@ -50,12 +50,12 @@ public:
                 return x;
             }
         }
-        return T(); // Return default value if not found
+        return T();
     }
 
     T find_min() {
         if (S.empty()) {
-            throw std::out_of_range("Empty set");
+            throw out_of_range("Set vacío");
         }
 
         T out = S.front();
@@ -69,7 +69,7 @@ public:
 
     T find_max() {
         if (S.empty()) {
-            throw std::out_of_range("Empty set");
+            throw out_of_range("Set vacío");
         }
 
         T out = S.front();

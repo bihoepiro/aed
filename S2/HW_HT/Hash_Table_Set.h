@@ -17,7 +17,7 @@ template <typename T>
 class Hash_Table_Set {
 private:
     set_from_seq<ForwardList<T>> chain_set;
-    std::vector<ForwardList<T>> A;
+    vector<ForwardList<T>> A;
     int size;
     int r;
     int p;
@@ -36,8 +36,8 @@ private:
             if (r % 100) {
                 f += 1;
             }
-            int m = std::max(n, 1) * f;
-            A = std::vector<ForwardList<T>>(m, chain_set);
+            int m = max(n, 1) * f;
+            A = vector<ForwardList<T>>(m, chain_set);
             for (const auto& x : *this) {
                 int h = _hash(x.key, m);
                 A[h].insert(x);
@@ -47,14 +47,14 @@ private:
     }
 
     int _hash(int k, int m) {
-        // Implementa la función _hash
+
         return ((a * k) % p) % m;
     }
 
 public:
 
     Hash_Table_Set(int r = 200) : chain_set(), A(), size(0), r(r), p(2147483647) {
-        // Inicializa el generador de números aleatorios
+
         srand(static_cast<unsigned>(time(nullptr)));
 
         // Inicializa a con un valor aleatorio en el rango [1, p - 1]
