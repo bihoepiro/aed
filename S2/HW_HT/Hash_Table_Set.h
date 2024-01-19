@@ -5,9 +5,8 @@
 #ifndef HW_HT_HASH_TABLE_SET_H
 #define HW_HT_HASH_TABLE_SET_H
 
-#include <forward_list>
-#include <initializer_list>
 #include <iostream>
+#include <forward_list>
 #include <stdexcept>
 
 const int maxColision = 3;
@@ -83,12 +82,12 @@ public:
         size++;
     }
 
-    TV& find(TK key) const {
+    TV find(TK key) const {
         size_t hashcode = hash(key);
         int index = hashcode % capacity;
         for (const auto& it : array[index]) {
             if (it.first == key) {
-                return static_cast<std::basic_string<char> &>(static_cast<std::basic_string<char> &>(it.second));
+                return it.second;
             }
         }
         throw std::out_of_range("Key not found");
