@@ -1,5 +1,6 @@
 #include "iostream"
 #include <queue>
+#include <stack>
 using namespace std;
 
 /*
@@ -194,16 +195,24 @@ public:
         cout << endl;
     }
 
-    void DFS(NodeBT* node){
-        if (node == nullptr) {
-            return;
+    void DFS(){
+        stack<NodeBT*> s;
+        s.push(root);
+
+        while (!s.empty()) {
+            NodeBT* current = s.top();
+            cout << current->data << " ";
+            s.pop();
+
+            if (current->right != nullptr) {
+                s.push(current->right);
+            }
+
+            if (current->left != nullptr) {
+                s.push(current->left);
+            }
         }
-
-        cout << node->data << " ";
-
-        DFS(node->left);
-
-        DFS(node->right);
+        cout << endl;
     }
 
     NodeBT* findNode(NodeBT* node, T value) {
@@ -298,38 +307,41 @@ int main() {
     bst.insert( 2);
     bst.insert( 4);
 
-    cout << "BFS traversal: ";
+    cout << "Recorrido BFS: ";
     bst.BFS();
 
-    cout << "Tree height: " << bst.height(bst.root) << endl;
+    cout << "Recorrido DFS: ";
+    bst.DFS();
 
-    cout << "Minimum value: " << bst.minValue(bst.root) << endl;
-    cout << "Maximum value: " << bst.maxValue(bst.root) << endl;
+    cout << "Recorrido Preorder: ";
+    bst.Preorder();
 
-    int valueToFind = 3;
-    cout << "Is " << valueToFind << " in the tree? " << (bst.find(bst.root, valueToFind) ? "Yes" : "No") << endl;
+    cout << "Recorrido PostOrder: ";
+    bst.Postorder();
 
-    int valueToRemove = 5;
-    cout << "Removing " << valueToRemove  << endl;
-    bst.remove(valueToRemove);
+    cout << "Recorrido Inorder: ";
+    bst.Inorder();
 
-    cout << "BFS traversal after removal: ";
+    cout << "Altura del árbol: " << bst.height(bst.root) << endl;
+
+    cout << "Valor Mínimo: " << bst.minValue(bst.root) << endl;
+    cout << "Valor Máximo: " << bst.maxValue(bst.root) << endl;
+
+    int valFind = 3;
+    cout << "¿Está " << valFind << " en el árbol? " << (bst.find(bst.root, valFind) ? "Sí" : "No") << endl;
+
+    int valR = 5;
+    cout << "Remover " << valR  << endl;
+    bst.remove(valR);
+
+    cout << "Recorrido BFS con el nodo eliminado: ";
     bst.BFS();
 
     int valS = 3;
-    cout << "Successor of " << valS << ": " << bst.successor(valS) << endl;
-
+    cout << "Sucesor de " << valS << ": " << bst.successor(valS) << endl;
 
     int valP = 3;
-    cout << "Predecessor of " << valP << ": " << bst.predecessor(valP) << endl;
+    cout << "Precesor de " << valP << ": " << bst.predecessor(valP) << endl;
 
-    cout << "Postorder traversal: ";
-    bst.Postorder();
-
-    cout << "Inorder traversal: ";
-    bst.Inorder();
-
-    cout << "Preorder traversal: ";
-    bst.Preorder();
     return 0;
 }
