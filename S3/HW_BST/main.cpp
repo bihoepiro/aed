@@ -1,7 +1,16 @@
 #include "iostream"
 #include <queue>
 using namespace std;
-
+/*
+Métodos de BST
+- Insert // inserta nodos al BST
+- Remove // remueve un nodo especifico en el BST
+- Find // encuentra un nodo especifico en el BST
+- Height // altura del árbol
+- MinValue // encuentra el nodo de mínimo valor en el BST
+- MaxValue // encuentra el nodo de máximo valor en el BST
+- BFS // recorre el BST a través de BFS
+*/
 template <typename T>
 class BSTree {
 private:
@@ -135,27 +144,21 @@ int main() {
     bst.insert( 2);
     bst.insert( 4);
 
-    // Mostrar el recorrido en anchura (BFS)
     cout << "BFS traversal: ";
     bst.BFS();
 
-    // Obtener altura del árbol
     cout << "Tree height: " << bst.height(bst.root) << endl;
 
-    // Encontrar el valor mínimo y máximo
     cout << "Minimum value: " << bst.minValue(bst.root) << endl;
     cout << "Maximum value: " << bst.maxValue(bst.root) << endl;
 
-    // Verificar si un valor existe en el árbol
     int valueToFind = 3;
     cout << "Is " << valueToFind << " in the tree? " << (bst.find(bst.root, valueToFind) ? "Yes" : "No") << endl;
 
-    // Eliminar un nodo
     int valueToRemove = 5;
-    cout << "Removing " << valueToRemove << " from the tree." << endl;
+    cout << "Removing " << valueToRemove  << endl;
     bst.remove(valueToRemove);
 
-    // Mostrar el recorrido en anchura después de la eliminación
     cout << "BFS traversal after removal: ";
     bst.BFS();
 
