@@ -6,11 +6,13 @@ using namespace std;
 Métodos de BST
 - Insert // inserta nodos al BST
 - Remove // remueve un nodo especifico en el BST
-- Find // encuentra un nodo especifico en el BST
+- Find // verifica la existencia de un nodo especifico en el BST
 - Height // altura del árbol
 - MinValue // encuentra el nodo de mínimo valor en el BST
 - MaxValue // encuentra el nodo de máximo valor en el BST
+- FindNode // devuelve un nodo especifico en el BST
 - BFS // recorre el BST a través de BFS
+- DFS // recorre el BST a través de DFS
 - Successor // Indica el valor del nodo sucesor de cierto nodo en el BST
 - Predeccessor // Indica el valor del nodo predecesor de cierto nodo en el BST
  - Clear // Limpia todo el BST
@@ -147,6 +149,18 @@ public:
         cout << endl;
     }
 
+    void DFS(NodeBT* node){
+        if (node == nullptr) {
+            return;
+        }
+
+        cout << node->data << " ";
+
+        DFS(node->left);
+
+        DFS(node->right);
+    }
+
     NodeBT* findNode(NodeBT* node, T value) {
         if (node == nullptr || node->data == value) {
             return node;
@@ -225,6 +239,7 @@ public:
         clear(root);
         root = nullptr;
     }
+
 
 };
 
