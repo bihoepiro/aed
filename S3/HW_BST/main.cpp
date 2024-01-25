@@ -1,6 +1,7 @@
 #include "iostream"
 #include <queue>
 using namespace std;
+
 /*
 Métodos de BST
 - Insert // inserta nodos al BST
@@ -10,6 +11,9 @@ Métodos de BST
 - MinValue // encuentra el nodo de mínimo valor en el BST
 - MaxValue // encuentra el nodo de máximo valor en el BST
 - BFS // recorre el BST a través de BFS
+- Successor // Indica el valor del nodo sucesor de cierto nodo en el BST
+- Predeccessor // Indica el valor del nodo predecesor de cierto nodo en el BST
+ - Clear // Limpia todo el BST
 */
 template <typename T>
 class BSTree {
@@ -63,8 +67,20 @@ private:
         return root;
     }
 
+    void clear(NodeBT* node) {
+        if (node == nullptr) {
+            return;
+        }
+
+        clear(node->left);
+        clear(node->right);
+
+        delete node;
+    }
+
 public:
-    NodeBT *root= nullptr;
+    NodeBT *root;
+    BSTree() : root(nullptr) {}
     void insert(T value) {
         root = insert(root, value);
     }
@@ -131,11 +147,89 @@ public:
         cout << endl;
     }
 
+    NodeBT* findNode(NodeBT* node, T value) {
+        if (node == nullptr || node->data == value) {
+            return node;
+        }
+
+        if (value < node->data) {
+            return findNode(node->left, value);
+        } else {
+            return findNode(node->right, value);
+        }
+    }
+
+    T successor(T value) {
+        NodeBT* node = findNode(root, value);
+        if (node == nullptr) {
+            throw logic_error("No está el valor en el árbol");
+        }
+
+        if (node->right != nullptr) {
+            return minValue(node->right);
+        }
+
+        NodeBT* succ = nullptr;
+        NodeBT* current = root;
+
+        while (current != nullptr) {
+            if (value < current->data) {
+                succ = current;
+                current = current->left;
+            } else if (value > current->data) {
+                current = current->right;
+            } else {
+                break;
+            }
+        }
+
+        if (succ == nullptr) {
+            throw logic_error("No hay sucesor");
+        }
+
+        return succ->data;
+    }
+
+    T predecessor(T value) {
+        NodeBT* node = findNode(root, value);
+        if (node == nullptr) {
+            throw logic_error("No está el valor en el árbol");
+        }
+
+        if (node->left != nullptr) {
+            return maxValue(node->left);
+        }
+
+        NodeBT* pred = nullptr;
+        NodeBT* current = root;
+
+        while (current != nullptr) {
+            if (value > current->data) {
+                pred = current;
+                current = current->right;
+            } else if (value < current->data) {
+                current = current->left;
+            } else {
+                break;
+            }
+        }
+
+        if (pred == nullptr) {
+            throw logic_error("No hay precedor");
+        }
+
+        return pred->data;
+    }
+
+    void clear() {
+        clear(root);
+        root = nullptr;
+    }
+
 };
 
 int main() {
     BSTree<int> bst;
-
 
     // Insertar elementos
     bst.insert(5);
@@ -161,6 +255,14 @@ int main() {
 
     cout << "BFS traversal after removal: ";
     bst.BFS();
+
+    int valS = 3;
+    cout << "Successor of " << valS << ": " << bst.successor(valS) << endl;
+
+
+    int valP = 3;
+    cout << "Predecessor of " << valP << ": " << bst.predecessor(valP) << endl;
+
 
     return 0;
 }
