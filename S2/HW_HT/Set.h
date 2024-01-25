@@ -69,7 +69,7 @@ public:
 
     Set Difference(const Set &other) {
         Set result;
-        
+
         for (const auto& entry : hashTable.iter_order()) {
             if (!other.Contains(entry.first)) {
                 result.Insert(entry.first);
