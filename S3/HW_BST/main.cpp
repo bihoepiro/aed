@@ -6,13 +6,16 @@ using namespace std;
 Métodos de BST
 - Insert // inserta nodos al BST
 - Remove // remueve un nodo especifico en el BST
-- Find // verifica la existencia de un nodo especifico en el BST
 - Height // altura del árbol
 - MinValue // encuentra el nodo de mínimo valor en el BST
 - MaxValue // encuentra el nodo de máximo valor en el BST
-- FindNode // devuelve un nodo especifico en el BST
+- Find // verifica la existencia de un nodo especifico en el BST
+- Preorder // recorre el BST a través de Preorder
+- Postorder // recorre el BST a través de Postorder
+- Inorder // recorre el BST a través de Inorder
 - BFS // recorre el BST a través de BFS
 - DFS // recorre el BST a través de DFS
+- FindNode // devuelve un nodo especifico en el BST
 - Successor // Indica el valor del nodo sucesor de cierto nodo en el BST
 - Predeccessor // Indica el valor del nodo predecesor de cierto nodo en el BST
  - Clear // Limpia todo el BST
@@ -80,6 +83,33 @@ private:
         delete node;
     }
 
+    void Preorder(NodeBT* node) {
+        if (node == NULL)
+            return;
+
+        cout << node->data << " ";
+        Preorder(node->left);
+        Preorder(node->right);
+    }
+
+    void Inorder(NodeBT* node) {
+        if (node == NULL)
+            return;
+
+        Inorder(node->left);
+        cout << node->data << " ";
+        Inorder(node->right);
+    }
+
+    void Postorder(NodeBT* node) {
+        if (node == NULL)
+            return;
+
+        Postorder(node->left);
+        Postorder(node->right);
+        cout << node->data << " ";
+    }
+
 public:
     NodeBT *root;
     BSTree() : root(nullptr) {}
@@ -122,6 +152,21 @@ public:
         else if(value > node->data)
             return find(node->right, value);
         else return true;
+    }
+
+    void Preorder() {
+        Preorder(root);
+        cout << endl;
+    }
+
+    void Postorder() {
+        Postorder(root);
+        cout << endl;
+    }
+
+    void Inorder() {
+        Inorder(root);
+        cout << endl;
     }
 
     void BFS() const {
@@ -278,6 +323,13 @@ int main() {
     int valP = 3;
     cout << "Predecessor of " << valP << ": " << bst.predecessor(valP) << endl;
 
+    cout << "Postorder traversal: ";
+    bst.Postorder();
 
+    cout << "Inorder traversal: ";
+    bst.Inorder();
+
+    cout << "Preorder traversal: ";
+    bst.Preorder();
     return 0;
 }
