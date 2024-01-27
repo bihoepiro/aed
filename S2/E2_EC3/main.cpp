@@ -3,36 +3,27 @@
 #include <map>
 using namespace std;
 
-/*
- * Ian Gonzales
- * Samanta Chang
- * Bihonda Epiquien
- * */
-
 class Solution {
 public:
-    string decodeMessage(string key, string message) {
-        // add your code
-        map<char, char> tabla;
-        char abece = 'a';
+    string decodeMessage(string key, string message){
+        map<char, char> afake;
+        char al='a';
 
-        for (char letra: key) {
-            if (letra == ' ' || tabla[letra]) {
+        for (char letra:key){
+            if (letra == ' ' || afake[letra]) {
                 continue;
             }
-            tabla[letra] = abece++;
+            afake[letra] = al++;
         }
 
-        string valor_retorno = "";
-        for (char letra: message) {
-            if (letra == ' ') {
-                valor_retorno += ' ';
-            }
-            else {
-                valor_retorno += tabla[letra];
-            }
+        afake[' ']=' ';
+
+        string palabra;
+        for (char letrita:message){
+            palabra+= afake[letrita];
         }
-        return valor_retorno;
+
+        return palabra;
     }
 };
 

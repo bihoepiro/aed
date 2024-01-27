@@ -4,34 +4,28 @@
 #include <cmath>
 using namespace std;
 
-/*
- * Ian Gonzales
- * Samanta Chang
- * Bihonda Epiquien
- * */
 
 class Solution {
 public:
     int maxNumberOfBalloons(string text) {
-		// add your code
-        map<char, int> mapeo;
-        for (char letra: text) {
-            mapeo[letra]++;
+        map<char, int> dic;
+        for(char letra:text){
+            dic[letra]++;
         }
-        int valor_minimo = mapeo['b'];
-        if (valor_minimo > mapeo['a']) {
-            valor_minimo = mapeo['a'];
+        int maxb=dic['b'];
+        if(maxb> dic['a']){
+            maxb=dic['a'];
         }
-        if (valor_minimo > floor(mapeo['l'] / 2)) {
-            valor_minimo = floor(mapeo['l'] / 2);
+        if(maxb> dic['n']){
+            maxb=dic['n'];
         }
-        if (valor_minimo > floor(mapeo['o'] / 2)) {
-            valor_minimo = floor(mapeo['o'] / 2);
+        if(maxb> floor(dic['l']/2)){
+            maxb=floor(dic['l']/2);
         }
-        if (valor_minimo > mapeo['n']) {
-            valor_minimo = mapeo['n'];
+        if(maxb> floor(dic['o']/2)){
+            maxb=floor(dic['o']/2);
         }
-		return valor_minimo;
+        return maxb;
     }
 };
 
